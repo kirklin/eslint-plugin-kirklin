@@ -5,22 +5,22 @@ import { createEslintRule } from "../utils";
 export const RULE_NAME = "consistent-list-newline";
 export type MessageIds = "shouldWrap" | "shouldNotWrap";
 export type Options = [{
-  ArrayExpression?: boolean;
-  ArrowFunctionExpression?: boolean;
-  CallExpression?: boolean;
-  ExportNamedDeclaration?: boolean;
-  FunctionDeclaration?: boolean;
-  FunctionExpression?: boolean;
-  ImportDeclaration?: boolean;
-  NewExpression?: boolean;
-  ObjectExpression?: boolean;
-  TSInterfaceDeclaration?: boolean;
-  TSTupleType?: boolean;
-  TSTypeLiteral?: boolean;
-  TSTypeParameterDeclaration?: boolean;
-  TSTypeParameterInstantiation?: boolean;
-  ObjectPattern?: boolean;
-  ArrayPattern?: boolean;
+  ArrayExpression?: boolean
+  ArrowFunctionExpression?: boolean
+  CallExpression?: boolean
+  ExportNamedDeclaration?: boolean
+  FunctionDeclaration?: boolean
+  FunctionExpression?: boolean
+  ImportDeclaration?: boolean
+  NewExpression?: boolean
+  ObjectExpression?: boolean
+  TSInterfaceDeclaration?: boolean
+  TSTupleType?: boolean
+  TSTypeLiteral?: boolean
+  TSTypeParameterDeclaration?: boolean
+  TSTypeParameterInstantiation?: boolean
+  ObjectPattern?: boolean
+  ArrayPattern?: boolean
 }];
 
 export default createEslintRule<Options, MessageIds>({

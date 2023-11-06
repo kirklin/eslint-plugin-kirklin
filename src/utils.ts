@@ -14,7 +14,7 @@ const blobUrl = "https://github.com/kirklin/eslint-plugin-kirklin/blob/main/src/
 export interface RuleModule<
   T extends readonly unknown[],
 > extends Rule.RuleModule {
-  defaultOptions: T;
+  defaultOptions: T
 }
 
 /**
