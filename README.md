@@ -2,6 +2,10 @@
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![bundle][bundle-src]][bundle-href]
+[![JSDocs][jsdocs-src]][jsdocs-href]
+[![License][license-src]][license-href]
+[![javascript_code style][code-style-image]][code-style-url]
 
 Kirklin extended ESLint rules. For [kirklin/eslint-config](https://github.com/kirklin/eslint-config).
 
@@ -9,7 +13,8 @@ Kirklin extended ESLint rules. For [kirklin/eslint-config](https://github.com/ki
 
 ## License
 
-[MIT](./LICENSE) License © 2023-PRESENT [Kirk Lin](https://github.com/kirklin)
+[MIT](./LICENSE) License &copy; 2023-PRESENT [Kirk Lin](https://github.com/kirklin)
+
 
 <!-- Badges -->
 
@@ -17,3 +22,11 @@ Kirklin extended ESLint rules. For [kirklin/eslint-config](https://github.com/ki
 [npm-version-href]: https://npmjs.com/package/eslint-plugin-kirklin
 [npm-downloads-src]: https://img.shields.io/npm/dm/eslint-plugin-kirklin?style=flat&colorA=080f12&colorB=3491fa
 [npm-downloads-href]: https://npmjs.com/package/eslint-plugin-kirklin
+[bundle-src]: https://img.shields.io/bundlephobia/minzip/eslint-plugin-kirklin?style=flat&colorA=080f12&colorB=3491fa&label=minzip
+[bundle-href]: https://bundlephobia.com/result?p=eslint-plugin-kirklin
+[license-src]: https://img.shields.io/github/license/kirklin/eslint-plugin-kirklin.svg?style=flat&colorA=080f12&colorB=3491fa
+[license-href]: https://github.com/kirklin/eslint-plugin-kirklin/blob/main/LICENSE
+[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=3491fa
+[jsdocs-href]: https://www.jsdocs.io/package/eslint-plugin-kirklin
+[code-style-image]: https://img.shields.io/badge/code__style-%40kirklin%2Feslint--config-3491fa?style=flat&colorA=080f12&colorB=3491fa
+[code-style-url]: https://github.com/kirklin/eslint-config/
