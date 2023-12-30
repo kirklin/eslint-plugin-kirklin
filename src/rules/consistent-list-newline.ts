@@ -5,22 +5,22 @@ import { createEslintRule } from "../utils";
 export const RULE_NAME = "consistent-list-newline";
 export type MessageIds = "shouldWrap" | "shouldNotWrap";
 export type Options = [{
-  ArrayExpression?: boolean
-  ArrowFunctionExpression?: boolean
-  CallExpression?: boolean
-  ExportNamedDeclaration?: boolean
-  FunctionDeclaration?: boolean
-  FunctionExpression?: boolean
-  ImportDeclaration?: boolean
-  NewExpression?: boolean
-  ObjectExpression?: boolean
-  TSInterfaceDeclaration?: boolean
-  TSTupleType?: boolean
-  TSTypeLiteral?: boolean
-  TSTypeParameterDeclaration?: boolean
-  TSTypeParameterInstantiation?: boolean
-  ObjectPattern?: boolean
-  ArrayPattern?: boolean
+  ArrayExpression?: boolean;
+  ArrowFunctionExpression?: boolean;
+  CallExpression?: boolean;
+  ExportNamedDeclaration?: boolean;
+  FunctionDeclaration?: boolean;
+  FunctionExpression?: boolean;
+  ImportDeclaration?: boolean;
+  NewExpression?: boolean;
+  ObjectExpression?: boolean;
+  TSInterfaceDeclaration?: boolean;
+  TSTupleType?: boolean;
+  TSTypeLiteral?: boolean;
+  TSTypeParameterDeclaration?: boolean;
+  TSTypeParameterInstantiation?: boolean;
+  ObjectPattern?: boolean;
+  ArrayPattern?: boolean;
 }];
 
 export default createEslintRule<Options, MessageIds>({
@@ -32,24 +32,44 @@ export default createEslintRule<Options, MessageIds>({
       recommended: "stylistic",
     },
     fixable: "whitespace",
-    schema: [],
+    schema: [{
+      type: "object",
+      properties: {
+        ArrayExpression: { type: "boolean" },
+        ArrowFunctionExpression: { type: "boolean" },
+        CallExpression: { type: "boolean" },
+        ExportNamedDeclaration: { type: "boolean" },
+        FunctionDeclaration: { type: "boolean" },
+        FunctionExpression: { type: "boolean" },
+        ImportDeclaration: { type: "boolean" },
+        NewExpression: { type: "boolean" },
+        ObjectExpression: { type: "boolean" },
+        TSInterfaceDeclaration: { type: "boolean" },
+        TSTupleType: { type: "boolean" },
+        TSTypeLiteral: { type: "boolean" },
+        TSTypeParameterDeclaration: { type: "boolean" },
+        TSTypeParameterInstantiation: { type: "boolean" },
+        ObjectPattern: { type: "boolean" },
+        ArrayPattern: { type: "boolean" },
+      } satisfies Record<keyof Options[0], { type: "boolean" }>,
+      additionalProperties: false,
+    }],
     messages: {
-      shouldWrap: "Should have line breaks between items",
-      shouldNotWrap: "Should not have line breaks between items",
+      shouldWrap: "Should have line breaks between items, in node {{name}}",
+      shouldNotWrap: "Should not have line breaks between items, in node {{name}}",
     },
   },
   defaultOptions: [{}],
   create: (context, [options = {}] = [{}]) => {
     function removeLines(fixer: RuleFixer, start: number, end: number) {
       const range = [start, end] as const;
-      const code = context.getSourceCode().text.slice(...range);
+      const code = context.sourceCode.text.slice(...range);
       return fixer.replaceTextRange(range, code.replace(/(\r\n|\n)/g, ""));
     }
 
     function check(
       node: TSESTree.Node,
       children: (TSESTree.Node | null)[],
-      prevNode?: TSESTree.Node,
       nextNode?: TSESTree.Node,
     ) {
       const items = children.filter(Boolean) as TSESTree.Node[];
@@ -57,9 +77,14 @@ export default createEslintRule<Options, MessageIds>({
         return;
       }
 
-      const startLine = prevNode
-        ? prevNode.loc.end.line
-        : node.loc.start.line;
+      const startToken = context.sourceCode.getTokenBefore(items[0]);
+      const endToken = context.sourceCode.getTokenAfter(items[items.length - 1]);
+      const startLine = startToken!.loc.start.line;
+
+      if (startToken!.loc.start.line === endToken!.loc.end.line) {
+        return;
+      }
+
       let mode: "inline" | "newline" | null = null;
       let lastLine = startLine;
 
@@ -76,6 +101,9 @@ export default createEslintRule<Options, MessageIds>({
           context.report({
             node: item,
             messageId: "shouldWrap",
+            data: {
+              name: node.type,
+            },
             *fix(fixer) {
               yield fixer.insertTextBefore(item, "\n");
             },
@@ -85,6 +113,9 @@ export default createEslintRule<Options, MessageIds>({
           context.report({
             node: item,
             messageId: "shouldNotWrap",
+            data: {
+              name: node.type,
+            },
             *fix(fixer) {
               yield removeLines(fixer, lastItem!.range[1], item.range[0]);
             },
@@ -94,16 +125,22 @@ export default createEslintRule<Options, MessageIds>({
         lastLine = item.loc.end.line;
       });
 
-      const endLoc = nextNode?.loc.start ?? node.loc.end;
-      const endRange = nextNode?.range[0]
-        ? nextNode?.range[0] - 1
+      const endRange = nextNode
+        ? Math.min(
+          context.sourceCode.getTokenBefore(nextNode)!.range[0],
+          node.range[1],
+        )
         : node.range[1];
+      const endLoc = context.sourceCode.getLocFromIndex(endRange);
 
       const lastItem = items[items.length - 1]!;
       if (mode === "newline" && endLoc.line === lastLine) {
         context.report({
           node: lastItem,
           messageId: "shouldWrap",
+          data: {
+            name: node.type,
+          },
           *fix(fixer) {
             yield fixer.insertTextAfter(lastItem, "\n");
           },
@@ -113,13 +150,20 @@ export default createEslintRule<Options, MessageIds>({
         if (items.length === 1 && items[0].loc.start.line !== items[1]?.loc.start.line) {
           return;
         }
-        context.report({
-          node: lastItem,
-          messageId: "shouldNotWrap",
-          *fix(fixer) {
-            yield removeLines(fixer, lastItem.range[1], endRange);
-          },
-        });
+
+        const content = context.sourceCode.text.slice(lastItem.range[1], endRange);
+        if (content.includes("\n")) {
+          context.report({
+            node: lastItem,
+            messageId: "shouldNotWrap",
+            data: {
+              name: node.type,
+            },
+            *fix(fixer) {
+              yield removeLines(fixer, lastItem.range[1], endRange);
+            },
+          });
+        }
       }
     }
 
@@ -140,7 +184,6 @@ export default createEslintRule<Options, MessageIds>({
         check(
           node,
           node.params,
-          node.typeParameters || undefined,
           node.returnType || node.body,
         );
       },
@@ -148,30 +191,21 @@ export default createEslintRule<Options, MessageIds>({
         check(
           node,
           node.params,
-          node.typeParameters || undefined,
           node.returnType || node.body,
         );
       },
       ArrowFunctionExpression: (node) => {
+        if (node.params.length <= 1) {
+          return;
+        }
         check(
           node,
           node.params,
-          node.typeParameters || undefined,
           node.returnType || node.body,
         );
       },
       CallExpression: (node) => {
-        const startNode
-        // if has type generic, check the last type argument
-        = node.typeArguments?.params.length
-          ? node.typeArguments.params[node.typeArguments.params.length - 1]
-          // if the callee is a member expression, get the property
-          : node.callee.type === "MemberExpression"
-            ? node.callee.property
-            // else get the callee
-            : node.callee;
-
-        check(node, node.arguments, startNode);
+        check(node, node.arguments);
       },
       TSInterfaceDeclaration: (node) => {
         check(node, node.body.body);
@@ -183,7 +217,7 @@ export default createEslintRule<Options, MessageIds>({
         check(node, node.elementTypes);
       },
       NewExpression: (node) => {
-        check(node, node.arguments, node.callee);
+        check(node, node.arguments);
       },
       TSTypeParameterDeclaration(node) {
         check(node, node.params);
@@ -192,7 +226,7 @@ export default createEslintRule<Options, MessageIds>({
         check(node, node.params);
       },
       ObjectPattern(node) {
-        check(node, node.properties, undefined, node.typeAnnotation);
+        check(node, node.properties, node.typeAnnotation);
       },
       ArrayPattern(node) {
         check(node, node.elements);

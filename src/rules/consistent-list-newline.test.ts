@@ -24,9 +24,68 @@ const valids = [
   "function foo<T = {\na: 1,\nb: 2\n}>(a, b) {}",
   "foo(() =>\nbar())",
   "foo(() =>\nbar()\n)",
-  "call<{\nfoo: 'bar'\n}>('')",
+  `call<{\nfoo: 'bar'\n}>('')`,
   // https://github.com/kirklin/eslint-plugin-kirklin/issues/11
-  "function fn({ foo, bar }: {\nfoo: 'foo'\nbar: 'bar'\n}) {}",
+  `function fn({ foo, bar }: {\nfoo: 'foo'\nbar: 'bar'\n}) {}`,
+  {
+    code: "foo(\na, b\n)",
+    options: [{ CallExpression: false }],
+  },
+  // https://github.com/kirklin/eslint-plugin-kirklin/issues/14
+  {
+    code: `
+const a = (
+  <div>
+    {text.map((item, index) => (
+      <p>
+      </p>
+    ))}
+  </div>
+)
+  `,
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
+  },
+  // https://github.com/kirklin/eslint-plugin-kirklin/issues/15
+  `
+export const getTodoList = request.post<
+  Params,
+  ResponseData,
+>('/api/todo-list')
+`,
+  // https://github.com/kirklin/eslint-plugin-kirklin/issues/16
+  {
+    code: `
+function TodoList() {
+  const { data, isLoading } = useSwrInfinite(
+    (page) => ['/api/todo/list', { page }],
+    ([, params]) => getToDoList(params),
+  )
+  return <div></div>
+}`,
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
+  },
+  `
+bar(
+  foo => foo
+    ? ''
+    : ''
+)
+    `,
+  `
+bar(
+  (ruleName, foo) => foo
+    ? ''
+    : ''
+)
+  `,
 ];
 
 // Check snapshot for fixed code
@@ -56,6 +115,25 @@ const invalid = [
   "const {a,\nb\n} = c",
   "const [\na,b] = c",
   "foo(([\na,b]) => {})",
+  // https://github.com/kirklin/eslint-plugin-kirklin/issues/14
+  {
+    code: `
+const a = (
+  <div>
+    {text.map((
+      item, index) => (
+      <p>
+      </p>
+    ))}
+  </div>
+)
+  `,
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
+      },
+    },
+  },
 ] as const;
 
 const ruleTester: RuleTester = new RuleTester({
@@ -64,11 +142,20 @@ const ruleTester: RuleTester = new RuleTester({
 
 ruleTester.run(RULE_NAME, rule as any, {
   valid: valids,
-  invalid: invalid.map(i => ({
-    code: i,
-    errors: null,
-    onOutput: (output: string) => {
-      expect(output).toMatchSnapshot();
-    },
-  })),
+  invalid: invalid.map(i => typeof i === "string"
+    ? {
+        code: i,
+        errors: null,
+        onOutput: (output: string) => {
+          expect(output).toMatchSnapshot();
+        },
+      }
+    : {
+        ...i,
+        errors: null,
+        onOutput: (output: string) => {
+          expect(output).toMatchSnapshot();
+        },
+      },
+  ),
 });

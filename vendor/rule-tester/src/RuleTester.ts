@@ -316,9 +316,9 @@ export class RuleTester extends TestFramework {
 
     if (
       this.#testerConfig.dependencyConstraints
-      && !satisfiesAllDependencyConstraints(
-        this.#testerConfig.dependencyConstraints,
-      )
+        && !satisfiesAllDependencyConstraints(
+          this.#testerConfig.dependencyConstraints,
+        )
     ) {
       // for frameworks like mocha or jest that have a "skip" version of their function
       // we can provide a nice skipped test!
@@ -872,7 +872,7 @@ export class RuleTester extends TestFramework {
             if (
               !error.suggestions
               || (isReadonlyArray(error.suggestions)
-                && error.suggestions.length === 0)
+              && error.suggestions.length === 0)
             ) {
               if (
                 Array.isArray(message.suggestions)

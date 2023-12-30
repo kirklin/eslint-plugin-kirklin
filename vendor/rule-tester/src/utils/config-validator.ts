@@ -220,7 +220,7 @@ function formatErrors(errors: AjvErrorObject[]): string {
       }
       if (error.keyword === "type") {
         const formattedField = error.dataPath.slice(1);
-
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const formattedExpectedType = Array.isArray(error.schema)
           ? error.schema.join("/")
           : error.schema;

@@ -104,7 +104,7 @@ export abstract class TestFramework {
 
     if (
       typeof OVERRIDE_DESCRIBE === "function"
-      && typeof OVERRIDE_DESCRIBE.skip === "function"
+        && typeof OVERRIDE_DESCRIBE.skip === "function"
     ) {
       return OVERRIDE_DESCRIBE.skip.bind(OVERRIDE_DESCRIBE);
     }
@@ -115,7 +115,7 @@ export abstract class TestFramework {
 
     if (
       typeof OVERRIDE_DESCRIBE === "function"
-      || typeof OVERRIDE_IT === "function"
+        || typeof OVERRIDE_IT === "function"
     ) {
       throw new TypeError(
         "Set `RuleTester.describeSkip` to use `dependencyConstraints` with a custom test framework.",
@@ -166,7 +166,7 @@ export abstract class TestFramework {
 
     if (
       typeof OVERRIDE_IT === "function"
-      && typeof OVERRIDE_IT.only === "function"
+        && typeof OVERRIDE_IT.only === "function"
     ) {
       return OVERRIDE_IT.only.bind(OVERRIDE_IT);
     }
@@ -177,11 +177,11 @@ export abstract class TestFramework {
 
     if (
       typeof OVERRIDE_DESCRIBE === "function"
-      || typeof OVERRIDE_IT === "function"
+        || typeof OVERRIDE_IT === "function"
     ) {
       throw new TypeError(
         "Set `RuleTester.itOnly` to use `only` with a custom test framework.\n"
-          + "See https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester for more.",
+        + "See https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester for more.",
       );
     }
     if (typeof it === "function") {
@@ -208,7 +208,7 @@ export abstract class TestFramework {
 
     if (
       typeof OVERRIDE_IT === "function"
-      && typeof OVERRIDE_IT.skip === "function"
+        && typeof OVERRIDE_IT.skip === "function"
     ) {
       return OVERRIDE_IT.skip.bind(OVERRIDE_IT);
     }
@@ -219,7 +219,7 @@ export abstract class TestFramework {
 
     if (
       typeof OVERRIDE_DESCRIBE === "function"
-      || typeof OVERRIDE_IT === "function"
+        || typeof OVERRIDE_IT === "function"
     ) {
       throw new TypeError(
         "Set `RuleTester.itSkip` to use `only` with a custom test framework.",

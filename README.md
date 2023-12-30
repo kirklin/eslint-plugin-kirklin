@@ -15,7 +15,6 @@ Kirklin extended ESLint rules. For [kirklin/eslint-config](https://github.com/ki
 
 [MIT](./LICENSE) License &copy; 2023-PRESENT [Kirk Lin](https://github.com/kirklin)
 
-
 <!-- Badges -->
 
 [npm-version-src]: https://img.shields.io/npm/v/eslint-plugin-kirklin?style=flat&colorA=080f12&colorB=3491fa

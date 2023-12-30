@@ -1,15 +1,11 @@
 import type { ESLint, Linter } from "eslint";
 import { version } from "../package.json";
-import genericSpacing from "./rules/generic-spacing";
 import ifNewline from "./rules/if-newline";
 import importDedupe from "./rules/import-dedupe";
-import preferInlineTypeImport from "./rules/prefer-inline-type-import";
 import topLevelFunction from "./rules/top-level-function";
 import noImportNodeModulesByPath from "./rules/no-import-node-modules-by-path";
+import noImportDist from "./rules/no-import-dist";
 import noTsExportEqual from "./rules/no-ts-export-equal";
-import noCjsExports from "./rules/no-cjs-exports";
-import noConstEnum from "./rules/no-const-enum";
-import namedTupleSpacing from "./rules/named-tuple-spacing";
 import consistentListNewline from "./rules/consistent-list-newline";
 
 const plugin = {
@@ -19,29 +15,21 @@ const plugin = {
   },
   rules: {
     "consistent-list-newline": consistentListNewline,
-    "generic-spacing": genericSpacing,
     "if-newline": ifNewline,
     "import-dedupe": importDedupe,
-    "named-tuple-spacing": namedTupleSpacing,
-    "no-cjs-exports": noCjsExports,
     "no-import-node-modules-by-path": noImportNodeModulesByPath,
+    "no-import-dist": noImportDist,
     "no-ts-export-equal": noTsExportEqual,
-    "prefer-inline-type-import": preferInlineTypeImport,
     "top-level-function": topLevelFunction,
-
-    /**
-     * @deprecated Use `'no-restricted-syntax': ['error', 'TSEnumDeclaration[const=true]']` instead.
-     */
-    "no-const-enum": noConstEnum,
   },
 } satisfies ESLint.Plugin;
 
 export default plugin;
 
-type RuleDefinitations = typeof plugin["rules"];
+type RuleDefinitions = typeof plugin["rules"];
 
 export type RuleOptions = {
-  [K in keyof RuleDefinitations]: RuleDefinitations[K]["defaultOptions"]
+  [K in keyof RuleDefinitions]: RuleDefinitions[K]["defaultOptions"]
 };
 
 export type Rules = {
