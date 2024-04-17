@@ -316,9 +316,9 @@ export class RuleTester extends TestFramework {
 
     if (
       this.#testerConfig.dependencyConstraints
-        && !satisfiesAllDependencyConstraints(
-          this.#testerConfig.dependencyConstraints,
-        )
+      && !satisfiesAllDependencyConstraints(
+        this.#testerConfig.dependencyConstraints,
+      )
     ) {
       // for frameworks like mocha or jest that have a "skip" version of their function
       // we can provide a nice skipped test!
@@ -899,7 +899,7 @@ export class RuleTester extends TestFramework {
               error.suggestions.forEach((expectedSuggestion, index) => {
                 assert.ok(
                   typeof expectedSuggestion === "object"
-                    && expectedSuggestion != null,
+                  && expectedSuggestion != null,
                   "Test suggestion in 'suggestions' array must be an object.",
                 );
                 Object.keys(expectedSuggestion).forEach((propertyName) => {

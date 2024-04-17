@@ -77,7 +77,15 @@ export default createEslintRule<Options, MessageIds>({
         return;
       }
 
-      const startToken = context.sourceCode.getTokenBefore(items[0]);
+      // Look for the opening bracket, we first try to get the first token of the parent node
+      // and fallback to the token before the first item
+      let startToken = ["CallExpression", "NewExpression"].includes(node.type)
+        ? undefined
+        : context.sourceCode.getFirstToken(node);
+      if (startToken?.type !== "Punctuator") {
+        startToken = context.sourceCode.getTokenBefore(items[0]);
+      }
+
       const endToken = context.sourceCode.getTokenAfter(items[items.length - 1]);
       const startLine = startToken!.loc.start.line;
 
@@ -110,6 +118,9 @@ export default createEslintRule<Options, MessageIds>({
           });
         } else if (mode === "inline" && currentStart !== lastLine) {
           const lastItem = items[idx - 1];
+          if (context.sourceCode.getCommentsBefore(item).length > 0) {
+            return;
+          }
           context.report({
             node: item,
             messageId: "shouldNotWrap",
@@ -148,6 +159,9 @@ export default createEslintRule<Options, MessageIds>({
       } else if (mode === "inline" && endLoc.line !== lastLine) {
         // If there is only one multiline item, we allow the closing bracket to be on the a different line
         if (items.length === 1 && items[0].loc.start.line !== items[1]?.loc.start.line) {
+          return;
+        }
+        if (context.sourceCode.getCommentsAfter(lastItem).length > 0) {
           return;
         }
 
@@ -245,7 +259,8 @@ export default createEslintRule<Options, MessageIds>({
         if (options[key] === false) {
           delete listenser[key];
         }
-      });
+      },
+      );
 
     return listenser;
   },
