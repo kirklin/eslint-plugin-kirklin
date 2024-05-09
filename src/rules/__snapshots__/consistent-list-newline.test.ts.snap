@@ -1,73 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`consistent-list-newline > invalid >
-const a = (
-  <div>
-    {text.map((
-      item, index) => (
-      <p>
-      </p>
-    ))}
-  </div>
-)
-   1`] = `
-"
-const a = (
-  <div>
-    {text.map((
-      item,
-index
-) => (
-      <p>
-      </p>
-    ))}
-  </div>
-)
-  "
-`;
-
-exports[`consistent-list-newline > invalid >
-export default kirklin({
-},
-// some comment
-{
-  foo: 'bar'
-},
-{
-}
-  // hello
-) 1`] = `
-"
-export default kirklin({
-},
-// some comment
-{
-  foo: 'bar'
-},{
-}
-  // hello
-)"
-`;
-
-exports[`consistent-list-newline > invalid >
-export default kirklin({
-},
-{
-  foo: 'bar'
-}
-  // some comment
-  // hello
-) 1`] = `
-"
-export default kirklin({
-},{
-  foo: 'bar'
-}
-  // some comment
-  // hello
-)"
-`;
-
 exports[`consistent-list-newline > invalid > const [
 a,b] = c 1`] = `
 "const [
@@ -83,36 +15,32 @@ b
 exports[`consistent-list-newline > invalid > const a = [
 1, 2, 3] 1`] = `
 "const a = [
-1,
-2,
+1, 
+2, 
 3
 ]"
 `;
 
-exports[`consistent-list-newline > invalid > const a = [1,
+exports[`consistent-list-newline > invalid > const a = [1, 
 2, 3
 ] 1`] = `"const a = [1, 2, 3]"`;
 
 exports[`consistent-list-newline > invalid > const a = {
 foo: "bar", bar: 2 } 1`] = `
 "const a = {
-foo: "bar",
+foo: "bar", 
 bar: 2
  }"
 `;
 
-exports[`consistent-list-newline > invalid > const a = {foo: "bar",
+exports[`consistent-list-newline > invalid > const a = {foo: "bar", 
 bar: 2
-} 1`] = `"const a = {foo: "bar", bar: 2}"`;
-
-exports[`consistent-list-newline > invalid > const a = {foo: "bar", \\u000d
-bar: 2\\u000d
 } 1`] = `"const a = {foo: "bar", bar: 2}"`;
 
 exports[`consistent-list-newline > invalid > const foo = (
 a, b) => {} 1`] = `
 "const foo = (
-a,
+a, 
 b
 ) => {}"
 `;
@@ -121,7 +49,7 @@ exports[`consistent-list-newline > invalid > const foo = (
 a, b): {
 a:b} => {} 1`] = `
 "const foo = (
-a,
+a, 
 b
 ): {
 a:b
@@ -131,7 +59,7 @@ a:b
 exports[`consistent-list-newline > invalid > const foo = (
 a, b): {a:b} => {} 1`] = `
 "const foo = (
-a,
+a, 
 b
 ): {a:b} => {}"
 `;
@@ -169,7 +97,7 @@ X,Y>(
 X,
 Y
 >(
-1,
+1, 
 2
 )"
 `;
@@ -180,7 +108,7 @@ Y>(1, 2) 1`] = `"foo<X,Y>(1, 2)"`;
 exports[`consistent-list-newline > invalid > function foo(
 a, b) {} 1`] = `
 "function foo(
-a,
+a, 
 b
 ) {}"
 `;
@@ -196,12 +124,12 @@ Y
 exports[`consistent-list-newline > invalid > import {
 foo, bar } from "foo" 1`] = `
 "import {
-foo,
+foo, 
 bar
  } from "foo""
 `;
 
-exports[`consistent-list-newline > invalid > import { foo,
+exports[`consistent-list-newline > invalid > import { foo, 
 bar } from "foo" 1`] = `"import { foo, bar } from "foo""`;
 
 exports[`consistent-list-newline > invalid > interface Foo {
@@ -216,7 +144,7 @@ b: 2
 exports[`consistent-list-newline > invalid > log(
 a, b) 1`] = `
 "log(
-a,
+a, 
 b
 )"
 `;
