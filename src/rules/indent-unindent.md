@@ -7,6 +7,8 @@ Enforce consistent indentation style for content inside template string with `un
 <!-- eslint-skip -->
 ```js
 // 👎 bad
+import { unindent } from '../utils'
+
 const cases = [
   unindent`
 const foo = {
@@ -23,6 +25,8 @@ const foo = {
 <!-- eslint-skip -->
 ```js
 // 👍 good
+import { unindent } from '../utils'
+
 const cases = [
   unindent`
     const foo = {
@@ -37,3 +41,5 @@ const cases = [
   `,
 ]
 ```
+
+By default, this rule applies to template tags named `unindent`, `unIndent`, or `$`. It is specifically designed for the `unindent` utility function, which removes leading and trailing empty lines from a template string and strips common indentation from each line. This rule adjusts only the content within the template string without affecting the runtime result.

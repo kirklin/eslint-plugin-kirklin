@@ -1,27 +1,30 @@
-import type { RuleFixer, RuleListener } from "@typescript-eslint/utils/ts-eslint";
 import type { TSESTree } from "@typescript-eslint/utils";
+import type { RuleFix, RuleFixer, RuleListener } from "@typescript-eslint/utils/ts-eslint";
 import { createEslintRule } from "../utils";
 
 export const RULE_NAME = "consistent-list-newline";
 export type MessageIds = "shouldWrap" | "shouldNotWrap";
 export type Options = [{
   ArrayExpression?: boolean;
+  ArrayPattern?: boolean;
   ArrowFunctionExpression?: boolean;
   CallExpression?: boolean;
   ExportNamedDeclaration?: boolean;
   FunctionDeclaration?: boolean;
   FunctionExpression?: boolean;
   ImportDeclaration?: boolean;
+  JSONArrayExpression?: boolean;
+  JSONObjectExpression?: boolean;
+  JSXOpeningElement?: boolean;
   NewExpression?: boolean;
   ObjectExpression?: boolean;
+  ObjectPattern?: boolean;
+  TSFunctionType?: boolean;
   TSInterfaceDeclaration?: boolean;
   TSTupleType?: boolean;
   TSTypeLiteral?: boolean;
   TSTypeParameterDeclaration?: boolean;
   TSTypeParameterInstantiation?: boolean;
-  ObjectPattern?: boolean;
-  ArrayPattern?: boolean;
-  JSXOpeningElement?: boolean;
 }];
 
 export default createEslintRule<Options, MessageIds>({
@@ -30,29 +33,31 @@ export default createEslintRule<Options, MessageIds>({
     type: "layout",
     docs: {
       description: "Having line breaks styles to object, array and named imports",
-      recommended: "stylistic",
     },
     fixable: "whitespace",
     schema: [{
       type: "object",
       properties: {
         ArrayExpression: { type: "boolean" },
+        ArrayPattern: { type: "boolean" },
         ArrowFunctionExpression: { type: "boolean" },
         CallExpression: { type: "boolean" },
         ExportNamedDeclaration: { type: "boolean" },
         FunctionDeclaration: { type: "boolean" },
         FunctionExpression: { type: "boolean" },
         ImportDeclaration: { type: "boolean" },
+        JSONArrayExpression: { type: "boolean" },
+        JSONObjectExpression: { type: "boolean" },
+        JSXOpeningElement: { type: "boolean" },
         NewExpression: { type: "boolean" },
         ObjectExpression: { type: "boolean" },
+        ObjectPattern: { type: "boolean" },
+        TSFunctionType: { type: "boolean" },
         TSInterfaceDeclaration: { type: "boolean" },
         TSTupleType: { type: "boolean" },
         TSTypeLiteral: { type: "boolean" },
         TSTypeParameterDeclaration: { type: "boolean" },
         TSTypeParameterInstantiation: { type: "boolean" },
-        ObjectPattern: { type: "boolean" },
-        ArrayPattern: { type: "boolean" },
-        JSXOpeningElement: { type: "boolean" },
       } satisfies Record<keyof Options[0], { type: "boolean" }>,
       additionalProperties: false,
     }],
@@ -63,17 +68,41 @@ export default createEslintRule<Options, MessageIds>({
   },
   defaultOptions: [{}],
   create: (context, [options = {}] = [{}]) => {
-    function removeLines(fixer: RuleFixer, start: number, end: number) {
+    function removeLines(fixer: RuleFixer, start: number, end: number, delimiter?: string): RuleFix {
       const range = [start, end] as const;
       const code = context.sourceCode.text.slice(...range);
-      return fixer.replaceTextRange(range, code.replace(/(\r\n|\n)/g, ""));
+      return fixer.replaceTextRange(range, code.replace(/(\r\n|\n)/g, delimiter ?? ""));
+    }
+
+    function getDelimiter(root: TSESTree.Node, current: TSESTree.Node): string | undefined {
+      if (root.type !== "TSInterfaceDeclaration" && root.type !== "TSTypeLiteral") {
+        return;
+      }
+      const currentContent = context.sourceCode.text.slice(current.range[0], current.range[1]);
+      return currentContent.match(/(?:,|;)$/) ? undefined : ",";
+    }
+
+    function hasComments(current: TSESTree.Node): boolean {
+      let program: TSESTree.Node = current;
+      while (program.type !== "Program") {
+        program = program.parent;
+      }
+      const currentRange = current.range;
+
+      return !!program.comments?.some((comment) => {
+        const commentRange = comment.range;
+        return (
+          commentRange[0] > currentRange[0]
+          && commentRange[1] < currentRange[1]
+        );
+      });
     }
 
     function check(
       node: TSESTree.Node,
       children: (TSESTree.Node | null)[],
       nextNode?: TSESTree.Node,
-    ) {
+    ): void {
       const items = children.filter(Boolean) as TSESTree.Node[];
       if (items.length === 0) {
         return;
@@ -84,6 +113,15 @@ export default createEslintRule<Options, MessageIds>({
       let startToken = ["CallExpression", "NewExpression"].includes(node.type)
         ? undefined
         : context.sourceCode.getFirstToken(node);
+      if (node.type === "CallExpression") {
+        startToken = context.sourceCode.getTokenAfter(
+          node.typeArguments
+            ? node.typeArguments
+            : node.callee.type === "MemberExpression"
+              ? node.callee.property
+              : node.callee,
+        );
+      }
       if (startToken?.type !== "Punctuator") {
         startToken = context.sourceCode.getTokenBefore(items[0]);
       }
@@ -132,7 +170,7 @@ export default createEslintRule<Options, MessageIds>({
                 name: node.type,
               },
               *fix(fixer) {
-                yield removeLines(fixer, lastItem!.range[1], item.range[0]);
+                yield removeLines(fixer, lastItem!.range[1], item.range[0], getDelimiter(node, lastItem));
               },
             });
           }
@@ -179,7 +217,7 @@ export default createEslintRule<Options, MessageIds>({
               name: node.type,
             },
             *fix(fixer) {
-              yield removeLines(fixer, lastItem.range[1], endRange);
+              yield removeLines(fixer, lastItem.range[1], endRange, getDelimiter(node, lastItem));
             },
           });
         }
@@ -194,7 +232,12 @@ export default createEslintRule<Options, MessageIds>({
         check(node, node.elements);
       },
       ImportDeclaration: (node) => {
-        check(node, node.specifiers);
+        check(
+          node,
+          node.specifiers[0]?.type === "ImportDefaultSpecifier"
+            ? node.specifiers.slice(1)
+            : node.specifiers,
+        );
       },
       ExportNamedDeclaration: (node) => {
         check(node, node.specifiers);
@@ -235,6 +278,9 @@ export default createEslintRule<Options, MessageIds>({
       TSTupleType: (node) => {
         check(node, node.elementTypes);
       },
+      TSFunctionType: (node) => {
+        check(node, node.params);
+      },
       NewExpression: (node) => {
         check(node, node.arguments);
       },
@@ -257,6 +303,19 @@ export default createEslintRule<Options, MessageIds>({
 
         check(node, node.attributes);
       },
+      JSONArrayExpression(node: TSESTree.ArrayExpression) {
+        if (hasComments(node)) {
+          return;
+        }
+        check(node, node.elements);
+      },
+      JSONObjectExpression(node: TSESTree.ObjectExpression) {
+        if (hasComments(node)) {
+          return;
+        }
+
+        check(node, node.properties);
+      },
     } satisfies RuleListener;
 
     type KeysListener = keyof typeof listenser;
@@ -277,5 +336,5 @@ export default createEslintRule<Options, MessageIds>({
   },
 });
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars, ts/explicit-function-return-type
 function exportType<A, B extends A>() {}

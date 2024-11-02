@@ -2,10 +2,14 @@ import type { RuleListener, RuleWithMeta, RuleWithMetaAndName } from "@typescrip
 import type { RuleContext } from "@typescript-eslint/utils/ts-eslint";
 import type { Rule } from "eslint";
 
+// @keep-sorted
 const hasDocs = [
+  "consistent-chaining",
   "consistent-list-newline",
+  "curly",
   "if-newline",
   "import-dedupe",
+  "indent-unindent",
   "top-level-function",
 ];
 
@@ -86,7 +90,7 @@ export const createEslintRule = RuleCreator(
 
 const warned = new Set<string>();
 
-export function warnOnce(message: string) {
+export function warnOnce(message: string): void {
   if (warned.has(message)) {
     return;
   }
@@ -95,6 +99,7 @@ export function warnOnce(message: string) {
 }
 
 const _reFullWs = /^\s*$/;
+
 /**
  * Remove common leading whitespace from a template string.
  * Will also remove empty lines at the beginning and end.
@@ -107,7 +112,7 @@ const _reFullWs = /^\s*$/;
  *   }
  * `
  */
-export function unindent(str: TemplateStringsArray | string) {
+export function unindent(str: TemplateStringsArray | string): string {
   const lines = (typeof str === "string" ? str : str[0]).split("\n");
   const whitespaceLines = lines.map(line => _reFullWs.test(line));
 
