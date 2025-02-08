@@ -6,10 +6,9 @@ export default defineBuildConfig({
   ],
   declaration: true,
   clean: true,
-  rollup: {
-    emitCJS: true,
-  },
   externals: [
     "@typescript-eslint/utils",
   ],
+  rollup: {
+  },
 });
