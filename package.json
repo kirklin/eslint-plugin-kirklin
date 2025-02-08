@@ -1,7 +1,7 @@
 {
   "name": "eslint-plugin-kirklin",
   "type": "module",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "packageManager": "pnpm@10.2.1",
   "description": "Kirk Lin extended ESLint rules",
   "author": "Kirk Lin (https://github.com/kirklin)",
