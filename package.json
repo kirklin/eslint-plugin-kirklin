@@ -2,7 +2,7 @@
   "name": "eslint-plugin-kirklin",
   "type": "module",
   "version": "2.0.0",
-  "packageManager": "pnpm@10.2.1",
+  "packageManager": "pnpm@10.28.1",
   "description": "Kirk Lin extended ESLint rules",
   "author": "Kirk Lin (https://github.com/kirklin)",
   "license": "MIT",
@@ -18,10 +18,7 @@
   ],
   "sideEffects": false,
   "exports": {
-    ".": {
-      "types": "./dist/index.d.mts",
-      "default": "./dist/index.mjs"
-    }
+    ".": "./dist/index.mjs"
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -36,7 +33,7 @@
     "lint:fix": "pnpm run dev && eslint . --fix",
     "prepublishOnly": "nr build",
     "release": "bumpp",
-    "start": "esno src/index.ts",
+    "start": "tsx src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"
@@ -45,32 +42,25 @@
     "eslint": "*"
   },
   "devDependencies": {
-    "@antfu/ni": "^23.3.1",
-    "@antfu/utils": "^8.1.0",
-    "@kirklin/eslint-config": "^2.8.0",
+    "@antfu/ni": "^28.2.0",
+    "@antfu/utils": "^9.3.0",
+    "@kirklin/eslint-config": "^6.1.0",
     "@types/eslint": "^9.6.1",
-    "@types/lodash.merge": "^4.6.9",
-    "@types/node": "^22.13.1",
-    "@types/semver": "^7.5.8",
-    "@typescript-eslint/typescript-estree": "^8.23.0",
-    "@typescript-eslint/utils": "^8.23.0",
-    "bumpp": "^10.0.2",
-    "eslint": "^9.20.0",
-    "eslint-define-config": "^2.1.0",
-    "eslint-vitest-rule-tester": "^1.1.0",
-    "esno": "^4.8.0",
-    "jsonc-eslint-parser": "^2.4.0",
-    "lint-staged": "^15.4.3",
-    "lodash.merge": "4.6.2",
-    "pnpm": "^10.2.1",
-    "semver": "^7.7.1",
-    "simple-git-hooks": "^2.11.1",
-    "tsup": "^8.3.6",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3",
-    "unbuild": "^3.3.1",
-    "vite": "^6.1.0",
-    "vitest": "^3.0.5"
+    "@types/node": "^25.0.10",
+    "@typescript-eslint/typescript-estree": "^8.53.1",
+    "@typescript-eslint/utils": "^8.53.1",
+    "bumpp": "^10.4.0",
+    "eslint": "^9.39.2",
+    "eslint-vitest-rule-tester": "^3.0.1",
+    "jsonc-eslint-parser": "^2.4.2",
+    "lint-staged": "^16.2.7",
+    "simple-git-hooks": "^2.13.1",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   },
   "resolutions": {
     "eslint-plugin-kirklin": "workspace:*"

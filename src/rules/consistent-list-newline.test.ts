@@ -6,6 +6,8 @@ import { run } from "./_test";
 import rule, { RULE_NAME } from "./consistent-list-newline";
 
 const valids: ValidTestCase[] = [
+  "if (a) {}",
+  "if (\na\n) {}",
   "const a = { foo: \"bar\", bar: 2 }",
   "const a = {\nfoo: \"bar\",\nbar: 2\n}",
   "const a = [1, 2, 3]",
@@ -275,6 +277,8 @@ const invalid: InvalidTestCase[] = [
   "const {a,\nb\n} = c",
   "const [\na,b] = c",
   "foo(([\na,b]) => {})",
+  "if (\na) {}",
+  "if (a\n) {}",
 
   {
     description: "CRLF",
@@ -334,6 +338,18 @@ const invalid: InvalidTestCase[] = [
         // some comment
         // hello
       )"
+    `),
+  },
+  {
+    description: "comment after last item with comma",
+    code: $`
+      const a = b(c,
+          d, // comment
+        )
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "const a = b(c,    d, // comment
+        )"
     `),
   },
   {
@@ -538,6 +554,117 @@ const invalid: InvalidTestCase[] = [
        }
       ) => void
       }"
+    `),
+  },
+  {
+    code: $`
+      interface foo {
+      a:1}
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "interface foo {
+      a:1
+      }"
+    `),
+  },
+  {
+    code: $`
+      interface foo {a:1
+      }
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "interface foo {a:1}"
+    `),
+  },
+  {
+    code: $`
+      type foo = {
+      a:1}
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "type foo = {
+      a:1
+      }"
+    `),
+  },
+  {
+    code: $`
+      type foo = {a:1
+      }
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "type foo = {a:1}"
+    `),
+  },
+  {
+    code: $`
+      type foo = [
+      1]
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "type foo = [
+      1
+      ]"
+    `),
+  },
+  {
+    code: $`
+      type foo = [1
+      ]
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "type foo = [1]"
+    `),
+  },
+  {
+    code: $`
+      const foo = [
+      1]
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "const foo = [
+      1
+      ]"
+    `),
+  },
+  {
+    code: $`
+      const foo = {
+      a:1}
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "const foo = {
+      a:1
+      }"
+    `),
+  },
+  {
+    code: $`
+      const foo = {a:1
+      }
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "const foo = {a:1}"
+    `),
+  },
+  {
+    code: $`
+      function foo(a
+      ){}
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "function foo(a){}"
+    `),
+  },
+  {
+    code: $`
+      function foo(
+      a){}
+    `,
+    output: o => expect(o).toMatchInlineSnapshot(`
+      "function foo(
+      a
+      ){}"
     `),
   },
 ];

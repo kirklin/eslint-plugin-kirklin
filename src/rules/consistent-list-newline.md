@@ -30,7 +30,7 @@ It will check the newline style of the **first** property or item and apply to t
 
 ## Rule Conflicts
 
-This rule might conflict with the [object-curly-newline](https://eslint.org/docs/rules/object-curly-newline). You can turn if off.
+This rule might conflicts with the [object-curly-newline](https://eslint.org/docs/rules/object-curly-newline). You can turn if off.
 
 ```ts
 export default {
