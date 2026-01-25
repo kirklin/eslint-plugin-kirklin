@@ -7,7 +7,9 @@ export default defineBuildConfig({
   declaration: true,
   clean: true,
   externals: [
+    "eslint",
     "@typescript-eslint/utils",
+    "@typescript-eslint/utils/ast-utils",
   ],
   rollup: {
   },
