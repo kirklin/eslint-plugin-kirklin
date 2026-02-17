@@ -220,6 +220,17 @@ const valids: ValidTestCase[] = [
       parser: jsoncParser,
     },
   },
+  {
+    code: $`
+      if (a
+        || b
+        || c || d
+        || (d && b)
+      ) {
+        foo()
+      }
+    `,
+  },
 ];
 
 // Check snapshot for fixed code

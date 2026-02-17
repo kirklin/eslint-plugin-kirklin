@@ -213,9 +213,14 @@ export default createEslintRule<Options, MessageIds>({
           },
         });
       } else if (mode === "inline" && endLoc.line !== lastLine) {
-        // If there is only one multiline item, we allow the closing bracket to be on the a different line
-        if (items.length === 1 && !(multilineNodes as Set<AST_NODE_TYPES>).has(node.type)) {
-          return;
+        if (items.length === 1) {
+          const firstItem = items[0];
+          if (!(multilineNodes as Set<AST_NODE_TYPES>).has(node.type)) {
+            return;
+          }
+          if (firstItem.loc.start.line !== firstItem.loc.end.line) {
+            return;
+          }
         }
         const nextToken = context.sourceCode.getTokenAfter(lastItem);
         if (context.sourceCode.getCommentsAfter(nextToken && isCommaToken(nextToken) ? nextToken : lastItem).length > 0) {
@@ -272,7 +277,7 @@ export default createEslintRule<Options, MessageIds>({
         );
       },
       IfStatement: (node) => {
-        check(node, [node.test]);
+        check(node, [node.test], node.consequent);
       },
       ArrowFunctionExpression: (node) => {
         if (node.params.length <= 1) {
