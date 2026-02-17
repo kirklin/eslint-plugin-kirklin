@@ -15,11 +15,11 @@ const hasDocs = [
 
 const blobUrl = "https://github.com/kirklin/eslint-plugin-kirklin/blob/main/src/rules/";
 
-export interface RuleModule<
+export type RuleModule<
   T extends readonly unknown[],
-> extends Rule.RuleModule {
+> = Rule.RuleModule & {
   defaultOptions: T;
-}
+};
 
 /**
  * Creates reusable function to create rules with default options and docs URLs.
@@ -71,7 +71,7 @@ function createRule<
     ): RuleListener => {
       const optionsWithDefault = context.options.map((options, index) => {
         return {
-          ...(defaultOptions as any)[index] || {},
+          ...defaultOptions?.[index] || {},
           ...options || {},
         };
       }) as unknown as TOptions;
